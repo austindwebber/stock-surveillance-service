@@ -1,0 +1,142 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>My Serverless Stock App</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script src="https://cdn.zingchart.com/zingchart.min.js"></script>
+  <style>
+    #chartOne {
+    height: 400px;
+    width: 1000px;
+    }
+ </style>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $("#submit").click(function(e) {
+        e.preventDefault();
+        var stockTicker = $("#stockTicker").val();
+        $.ajax({
+          type: "POST",
+          url: 'https://9hhkhg6iw3.execute-api.us-east-1.amazonaws.com/v2/stockChartData', contentType: 'application/json',
+          data: JSON.stringify({
+            'stockTicker': stockTicker
+          }),
+          success: function(res){
+
+            var stockAPIData = res.data;
+            var stockData = [];
+            var stockDates = [];
+            var latestClosingPrice = stockAPIData[0].close;
+            var allTimeHigh = 0;
+            var allTimeLow = 0;
+            var i;
+            for (i = 0; i < stockAPIData.length; i++) {
+              stockData.push([stockAPIData[i].open, stockAPIData[i].high, stockAPIData[i].low, stockAPIData[i].close]);
+              stockDates.push([stockAPIData[i].date]);
+              if (stockAPIData[i].high > allTimeHigh) {
+                allTimeHigh = stockAPIData[i].high;
+              }
+              if (stockAPIData[i].low < allTimeLow) {
+                allTimeLow = stockAPIData[i].low;
+              }
+            }
+
+            allTimeLow = Math.floor(allTimeLow)
+            allTimeHigh = Math.ceil(allTimeHigh)
+
+            console.log("High " + allTimeHigh + " Low " + allTimeLow);
+            stockData.reverse();
+            stockDates.reverse();
+
+        
+         
+         var chartOneData = {
+          type: 'stock',
+          plot: {
+            aspect: "candlestick",
+            barwidth: "100%",
+            trendUp: {
+                backgroundcolor: "#099EFF",
+                linecolor: "#099EFF",
+                bordercolor: "#099EFF"
+            },
+            trendDown: {
+                backgroundcolor: "none",
+                linecolor: "#35203B",
+                bordercolor: "#35203B"
+            }
+          },
+          title: {
+            text: stockTicker + " 1 Year Chart",
+            adjustLayout: 'true'
+          },
+          scaleX: {
+            values: stockDates.slice(-252, -1),
+            step: "day"
+          },
+          scaleY: {
+              values: allTimeLow + ":" + allTimeHigh + ":1",
+              format: "$%v",
+              guide: {
+                  linestyle: "solid"
+              }
+          },
+          plotarea: {
+            marginleft: 'dynamic'
+          },
+          series: [ 
+            {
+              type: "stock",
+              decimals: 2,
+              values: stockData.slice(-252, -1),
+              guidelabel: {
+                  text: "Open: $%open<br>High: $%high<br>Low: $%low<br>Close: $%close",
+                  decimals: 2,
+                  visible: true
+              },
+              scales: 'scale-x,scale-y',
+              trendUp: {
+                 backgroundColor: '#66ff00',
+                 borderColor: '#66ff00',
+                 lineColor: '#66ff00'
+              },
+             trendDown: {
+                 backgroundColor: 'none',
+                 borderColor: '#ff0000',
+                 lineColor: '#ff0000'
+             },
+            }
+          ]
+         };
+         
+         zingchart.render({
+          id: 'chartOne',
+          data: chartOneData,
+          height: '100%',
+          width: '100%',
+         });
+         
+            $('#form-response').html('<div class="alert alert-info" role="alert">' + latestClosingPrice + '</div>');
+          },
+          error: function(){
+            $('#form-response').html('<div class="alert alert-info" role="alert">Oops! Something went wrong ... </div>');
+          }
+        });
+      })
+    });
+  </script>
+</head>
+<body>
+
+  <h1>Stock Surveillance Service</h1>
+  <p>Welcome to our stock screening service!<br/>
+    Please enter a stock ticker for us to quote:
+  </p>
+  <p>
+    <label for="stockTicker" class="control-label">Stock:</label>
+    <input type="text" id="stockTicker" class="form-control" placeholder="Stock" required />
+  </p>
+  <button class="btn btn-lg btn-primary btn-block" id="submit" type="submit" style="background-color:#FCFAF9;">Send</button>
+  <p>Latest Stock Price: <span id="form-response"></span></p>
+  <div id="chartOne"></div>
+</body>
+</html>
