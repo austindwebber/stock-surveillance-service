@@ -1,0 +1,44 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>My Serverless Stock App</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script src="https://cdn.zingchart.com/zingchart.min.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $("#submit").click(function(e) {
+        e.preventDefault();
+        var stockTicker = $("#stockTicker").val();
+        $.ajax({
+          type: "POST",
+          url: 'https://9hhkhg6iw3.execute-api.us-east-1.amazonaws.com/v2', contentType: 'application/json',
+          data: JSON.stringify({
+            'stockTicker': stockTicker
+          }),
+          success: function(res){
+
+            console.log(res);
+
+
+            $('#form-response').html('<div class="alert alert-info" role="alert">' + res['price'] + '</div>');
+          },
+          error: function(){
+            $('#form-response').html('<div class="alert alert-info" role="alert">Oops! Something went wrong ... </div>');
+          }
+        });
+      })
+    });
+  </script>
+</head>
+<body>
+  <h1>Stock Surveillance Service</h1>
+  <p>Welcome to our stock screening service!<br/>
+    Please enter a stock ticker for us to quote:
+  </p>
+  <p>
+    <label for="stockTicker" class="control-label">Stock:</label>
+    <input type="text" id="stockTicker" class="form-control" placeholder="Stock" required />
+  </p>
+  <button class="btn btn-lg btn-primary btn-block" id="submit" type="submit" style="background-color:#FCFAF9;">Send</button>
+  <p>Current Stock Price: <span id="form-response"></span></p>
+</body>
+</html>
