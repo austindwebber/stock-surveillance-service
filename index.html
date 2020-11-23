@@ -3,6 +3,7 @@
   <title>My Serverless Stock App</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
   <script src="https://cdn.zingchart.com/zingchart.min.js"></script>
+  <script src="https://www.simplestockcharts.com/assets/src/simplestockchart.js"></script>
   <script type="text/javascript">
     $(document).ready(function() {
       $("#submit").click(function(e) {
@@ -19,6 +20,15 @@
             console.log(res);
 
 
+            var chart = new SimpleStockChart();
+            chart.element = document.getElementById('chart');
+            chart.key = 'Q4OESUB6H59YFL9Z';
+            chart.ticker = res['stockTicker'];
+            chart.style.width = '100%';
+            chart.style.height = '420px';
+            chart.draw();
+
+
             $('#form-response').html('<div class="alert alert-info" role="alert">' + res['price'] + '</div>');
           },
           error: function(){
@@ -30,6 +40,7 @@
   </script>
 </head>
 <body>
+<div id="chart"></div>
   <h1>Stock Surveillance Service</h1>
   <p>Welcome to our stock screening service!<br/>
     Please enter a stock ticker for us to quote:
