@@ -4,11 +4,12 @@
   <head>
     <meta charset="utf-8">
 	<!-- Javascript SDK-->
-  <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script> 
-  <script src="js/amazon-cognito-auth.min.js"></script>
-  <script src="https://sdk.amazonaws.com/js/aws-sdk-2.797.0.min.js"></script>
-  <script src="js/amazon-cognito-identity.min.js"></script>  
-  <script src="js/config.js"></script>
+	<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script> 
+	<script src="js/amazon-cognito-auth.min.js"></script>
+	<script src="https://sdk.amazonaws.com/js/aws-sdk-2.797.0.min.js"></script>
+	<script src="js/amazon-cognito-identity.min.js"></script>  
+	<script src="js/config.js"></script>
+	<script src="https://www.google.com/recaptcha/api.js" async defer></script>
   </head>
 
 	
@@ -20,9 +21,16 @@
     <input type="email" class="form-control" id="emailInputRegister" placeholder="Email" pattern=".*" required><br><br>
     <input type="phone" class="form-control" id="phoneInputRegister" placeholder="Phone Number" pattern=".*"><br><br>
 	<input type="password" class="form-control" id="passwordInputRegister" placeholder="Password" pattern=".*" required><br><br>
-    <input type="password" class="form-control" id="confirmationpassword" placeholder="Confirm Password" pattern=".*" required><br><br>
-	<button id="mainbutton" class="btn btn-lg btn-primary btn-block" type="button" onclick="registerButton()" >Register</button>
+	<input type="password" class="form-control" id="confirmationpassword" placeholder="Confirm Password" pattern=".*" required><br><br>
+	<div class="g-recaptcha" data-sitekey="6Ley_eoZAAAAAPuekxXGC4Xu7VFiL7mQOhYhmTsX" data-callback="enableBtn"></div>
+	<button id="mainbutton" class="btn btn-lg btn-primary btn-block" type="button" onclick="registerButton()" disabled>Submit</button>
 
+
+	<script>
+		function enableBtn(){
+            document.getElementById("mainbutton").disabled = false;
+        }
+	</script>
 	<script>
 
 		var username;

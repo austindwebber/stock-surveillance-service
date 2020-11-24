@@ -1,7 +1,10 @@
 window._config = {
     cognito: {
-        userPoolId: '',
-        region: 'us-east-1',
-        clientId: ''
+        userPoolId: 'REDACTED',
+        region: 'REDACTED',
+        clientId: 'REDACTED'
+    },
+    recaptcha: {
+        secretKey: 'REDACTED',
     },
 };
