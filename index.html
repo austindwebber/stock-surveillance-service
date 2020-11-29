@@ -22,10 +22,16 @@
 
             var chart = new SimpleStockChart();
             chart.element = document.getElementById('chart');
-            chart.key = 'REDACTED';
+            chart.key = 'Q4OESUB6H59YFL9Z';
             chart.ticker = res['stockTicker'];
-            chart.style.width = '100%';
+            chart.skin = 'light';
+            chart.chart.stroke = '#1d8f00';
+            chart.font.fontSize = '14';
+            chart.font.fontFill = '#ffffff';
+            chart.style.width = '1000px';
             chart.style.height = '420px';
+            chart.style.margin = '20px';
+            chart.minorAxis.count = 5;
             chart.draw();
 
 
@@ -38,18 +44,20 @@
       })
     });
   </script>
+  <link rel="icon" 
+  type="image/ico" 
+  href="logo/favicon.ico">
 </head>
 <body>
-<div id="chart"></div>
-  <h1>Stock Surveillance Service</h1>
-  <p>Welcome to our stock screening service!<br/>
-    Please enter a stock ticker for us to quote:
-  </p>
+  <img src="logo/surveillance_logo_with_name.PNG" alt="Stock Surveillance">
+   
+  <br><p>Please enter a stock ticker for us to quote:</p>
   <p>
     <label for="stockTicker" class="control-label">Stock:</label>
-    <input type="text" id="stockTicker" class="form-control" placeholder="Stock" required />
+    <input type="text" id="stockTicker" class="form-control" placeholder="Ticker" required />
   </p>
   <button class="btn btn-lg btn-primary btn-block" id="submit" type="submit" style="background-color:#FCFAF9;">Send</button>
   <p>Current Stock Price: <span id="form-response"></span></p>
+  <div id="chart"></div>
 </body>
 </html>
