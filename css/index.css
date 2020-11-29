@@ -18,7 +18,8 @@ body {
 
 #companyWrapper {
     display: inline-flex;
-    padding: 10;
+    padding-top: 10;
+    padding-bottom: 10;
 }
 
 #company-name {
@@ -28,7 +29,7 @@ body {
 }
 #stock-price {
     padding-top: 15;
-    padding-left: 5;
+    padding-left: 10;
     color: #a0dd9f;
 }
 
@@ -40,3 +41,38 @@ body {
 #lower {
     padding-top: 20px;
 }
+
+#company-description {
+    padding-left: 25%;
+    padding-right: 25%;
+    font-size: 15;
+    color: black;
+}
+
+.flexbox-container {
+    display: flex;
+    text-align: left;
+    color: black;
+    font-size: 15;
+    justify-content: center;
+    flex-direction: row;
+    align-items: center;
+}
+.flexbox-item {
+    width: fit-content;
+    margin: 10px;
+    padding: 5px;
+}
+.flexbox-item-1 {
+    min-height: 20px;
+}
+.flexbox-item-2 {
+    min-height: 20px;
+}
+.data-label {
+    font-weight: bold;
+}
+#stockTickerInput {
+    justify-content: center;
+}
+

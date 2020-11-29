@@ -1,9 +1,18 @@
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!doctype html>
+<html lang="en">
 <head>
-  <title>My Serverless Stock App</title>
+  <title>Stock Surveillance Service</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="css/index.css">
+  <link rel="icon" type="image/ico" href="logo/favicon.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville&display=swap" rel="stylesheet"> 
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
   <script src="https://cdn.zingchart.com/zingchart.min.js"></script>
   <script src="https://www.simplestockcharts.com/assets/src/simplestockchart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
   <script type="text/javascript">
     $(document).ready(function() {
       $("#submit").click(function(e) {
@@ -34,11 +43,29 @@
             chart.minorAxis.count = 5;
             chart.draw();
 
+            var mktCap = res['mktCap'].toLocaleString('en', {useGrouping:true});
+            var avgVol = res['volAvg'].toLocaleString('en', {useGrouping:true});
+            var lastDiv = res['lastDiv'].toFixed(2);
+            var numEmployees = res['employees'].toLocaleString('en', {useGrouping:true});
+            
             
             $('#company-image').html('<img src="' + res['image'] + '" style="height: 50px" >');
             $('#company-name').html(res['companyName'] + ": ");
             $('#stock-price').html('$' + res['price']);
-            $('#form-response').show();
+            $('#company-description').html(res['description']);
+            $('#price-high').html('$' + res['priceHigh']);
+            $('#price-low').html('$' + res['priceLow']);
+            $('#market-cap').html('$' + mktCap);
+            $('#avg-volume').html(avgVol);
+            $('#last-dividend').html(lastDiv);
+            $('#ipo-date').html(res['ipoDate']);
+            $('#industry').html(res['industry']);
+            $('#sector').html(res['sector']);
+            $('#ceo').html(res['ceo']);
+            $('#employees').html(numEmployees);
+            $('#country').html(res['country']);
+            $('#website').html('<a href="' + res['website'] + '">' + res['website'] + '</a>');
+            $('#form-response').removeClass('d-none');
           },
           error: function(){
             $('#form-response').html('<div class="alert alert-info" role="alert">Oops! Something went wrong ... </div>');
@@ -47,31 +74,51 @@
       })
     });
   </script>
- <link rel="icon" type="image/ico" href="logo/favicon.ico">
- <link rel="stylesheet" href="css/index.css">
- <link rel="preconnect" href="https://fonts.gstatic.com">
- <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville&display=swap" rel="stylesheet"> 
 </head>
 <body>
   <div id="upper" class="bodyWrapper">
     <img src="logo/surveillance_logo_with_name.PNG" alt="Stock Surveillance">
     
     <br><p>Please enter a stock ticker for us to quote:</p>
-    <p>
-      <label for="stockTicker" class="control-label">Stock:</label>
-      <input type="text" id="stockTicker" class="form-control" placeholder="Ticker" required />
-      <button class="btn btn-lg btn-primary btn-block" id="submit" type="submit" style="background-color:#FCFAF9;">Check</button>
-    </p>
+      <div class="input-group text-center" id="stockTickerInput">
+        <input type="text" class="input-sm" id="stockTicker" placeholder="Ticker" aria-label="Username" aria-describedby="basic-addon1" required>
+        <button class="btn btn-primary btn-dark" id="submit" type="submit">Quote</button>
+      </div>
+
   </div>
   <div id="lower" class="bodyWrapper">
 
-    <div id="form-response" hidden>
-      
-      <div id="companyWrapper">
+    <div class="d-none" id="form-response">
+    
+      <div id="companyWrapper" class="pt-2 pb-2">
         <span id="company-image"></span>
-        <span id="company-name"></span>
-        <span id="stock-price"></span>
+        <span id="company-name" class="pt-3 pl-3"></span>
+        <span id="stock-price" class="pt-3 pl-2"></span>
       </div>
+      <br>
+      
+      <div class="flexbox-container">
+        <div class="flexbox-item">
+          <span class="flexbox-item-1 data-label">High Price: </span> <span id="price-high"></span><br>
+          <span class="flexbox-item-1 data-label">Low Price: </span> <span id="price-low"></span><br>
+          <span class="flexbox-item-1 data-label">Market Cap: </span> <span id="market-cap"></span><br>
+          <span class="flexbox-item-1 data-label">Average Volume: </span> <span id="avg-volume"></span><br>
+          <span class="flexbox-item-1 data-label">Last Dividend: </span> <span id="last-dividend"></span><br>
+          <span class="flexbox-item-1 data-label">IPO Date: </span> <span id="ipo-date"></span><br>
+        </div>
+        <div class="flexbox-item">
+          <span class="flexbox-item-2 data-label">Industry: </span> <span id="industry"></span><br>
+          <span class="flexbox-item-2 data-label">Sector: </span> <span id="sector"></span><br>
+          <span class="flexbox-item-2 data-label">CEO: </span> <span id="ceo"></span><br>
+          <span class="flexbox-item-2 data-label">Employees: </span> <span id="employees"></span><br>
+          <span class="flexbox-item-2 data-label">Country: </span> <span id="country"></span><br>
+          <span class="flexbox-item-2 data-label">Website: </span> <span id="website"></span><br>
+        </div>
+
+      </div>
+
+      <br>
+      <div id="company-description"></div>
       <br>
       <div id="chart"></div>
 
