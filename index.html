@@ -24,18 +24,21 @@
             chart.element = document.getElementById('chart');
             chart.key = 'Q4OESUB6H59YFL9Z';
             chart.ticker = res['stockTicker'];
-            chart.skin = 'light';
             chart.chart.stroke = '#1d8f00';
             chart.font.fontSize = '14';
             chart.font.fontFill = '#ffffff';
             chart.style.width = '1000px';
             chart.style.height = '420px';
             chart.style.margin = '20px';
+            chart.style.display = 'inline-flex';
             chart.minorAxis.count = 5;
             chart.draw();
 
-
-            $('#form-response').html('<div class="alert alert-info" role="alert">' + res['price'] + '</div>');
+            
+            $('#company-image').html('<img src="' + res['image'] + '" style="height: 50px" >');
+            $('#company-name').html(res['companyName'] + ": ");
+            $('#stock-price').html('$' + res['price']);
+            $('#form-response').show();
           },
           error: function(){
             $('#form-response').html('<div class="alert alert-info" role="alert">Oops! Something went wrong ... </div>');
@@ -44,20 +47,36 @@
       })
     });
   </script>
-  <link rel="icon" 
-  type="image/ico" 
-  href="logo/favicon.ico">
+ <link rel="icon" type="image/ico" href="logo/favicon.ico">
+ <link rel="stylesheet" href="css/index.css">
+ <link rel="preconnect" href="https://fonts.gstatic.com">
+ <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville&display=swap" rel="stylesheet"> 
 </head>
 <body>
-  <img src="logo/surveillance_logo_with_name.PNG" alt="Stock Surveillance">
-   
-  <br><p>Please enter a stock ticker for us to quote:</p>
-  <p>
-    <label for="stockTicker" class="control-label">Stock:</label>
-    <input type="text" id="stockTicker" class="form-control" placeholder="Ticker" required />
-  </p>
-  <button class="btn btn-lg btn-primary btn-block" id="submit" type="submit" style="background-color:#FCFAF9;">Send</button>
-  <p>Current Stock Price: <span id="form-response"></span></p>
-  <div id="chart"></div>
+  <div id="upper" class="bodyWrapper">
+    <img src="logo/surveillance_logo_with_name.PNG" alt="Stock Surveillance">
+    
+    <br><p>Please enter a stock ticker for us to quote:</p>
+    <p>
+      <label for="stockTicker" class="control-label">Stock:</label>
+      <input type="text" id="stockTicker" class="form-control" placeholder="Ticker" required />
+      <button class="btn btn-lg btn-primary btn-block" id="submit" type="submit" style="background-color:#FCFAF9;">Check</button>
+    </p>
+  </div>
+  <div id="lower" class="bodyWrapper">
+
+    <div id="form-response" hidden>
+      
+      <div id="companyWrapper">
+        <span id="company-image"></span>
+        <span id="company-name"></span>
+        <span id="stock-price"></span>
+      </div>
+      <br>
+      <div id="chart"></div>
+
+    </div>
+
+  </div>
 </body>
 </html>
