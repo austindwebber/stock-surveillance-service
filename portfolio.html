@@ -1,0 +1,108 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>My Portfolio</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $("#submit").click(function(e) {
+        e.preventDefault();
+        var stocks = "GOOG;AAPL;MSFT;TSLA";
+        $.ajax({
+          type: "POST",
+          url: 'https://9hhkhg6iw3.execute-api.us-east-1.amazonaws.com/v4/portfolio', contentType: 'application/json',
+          data: JSON.stringify({
+            'stocks': stocks
+          }),
+          success: function(res){
+
+            console.log(res);
+
+            console.log(res.length);
+
+            var e = document.body; // whatever you want to append the rows to:
+
+            for(var i = 0; i < res.length; i++){
+
+              var row = document.createElement("div");
+              var button = document.createElement('input');
+
+
+
+
+              // SET INPUT ATTRIBUTE 'type' AND 'value'.
+              button.setAttribute('type', 'button');
+              button.setAttribute('value', 'More Info: ' + res[i]['symbol']);
+
+              // ADD THE BUTTON's 'onclick' EVENT.
+              //button.setAttribute('onclick', 'GetTableValues()');
+
+              row.setAttribute('style', 'white-space: pre;border-style: solid;border: 2;border-color: blue');
+              row.className = "row";
+              row.textContent = res[i]['companyName'] + "\r\n";
+              row.textContent += res[i]['symbol'] + "\r\n";
+              row.textContent += res[i]['price'] + "\r\n";
+              row.textContent += res[i]['changes'] + "\r\n";
+
+              e.appendChild(row);
+              row.appendChild(button);
+            }
+
+
+
+            $('#form-response').html('<div class="alert alert-info" role="alert">Current Porfolio Overview</div>');
+          },
+          error: function(){
+            $('#form-response').html('<div class="alert alert-info" role="alert">Oops! Something went wrong ... </div>');
+          }
+        });
+      })
+
+      $("#dbpost").click(function(e) {
+        e.preventDefault();
+        var stocks = "AAPL,GOOG";
+        var userid = "tonypetersen@hotmail.com";
+        $.ajax({
+          type: "POST",
+          url: 'https://9hhkhg6iw3.execute-api.us-east-1.amazonaws.com/v5/updateportfolio', contentType: 'application/json',
+          data: JSON.stringify({
+            'stocks': stocks,
+            'userid': userid
+          }),
+          success: function(res){
+            $('#form-response').html('<div class="alert alert-info" role="alert">Current Porfolio Overview</div>');
+          },
+          error: function(){
+            $('#form-response').html('<div class="alert alert-info" role="alert">Oops! Something went wrong ... </div>');
+          }
+        });
+      })
+    });
+  </script>
+  <script language="javascript">
+    function genDivs(v){
+      var e = document.body; // whatever you want to append the rows to:
+      for(var i = 0; i < v; i++){
+        var row = document.createElement("div");
+        row.className = "row";
+        row.innerText = i;
+        e.appendChild(row);
+      }
+
+
+    }
+  </script>
+  <script>
+    window.addEventListener('load', function () {
+
+        //genDivs(10);
+    });
+  </script>
+</head>
+<body>
+  <div id="grid"></div>
+  <h1>Portfolio View</h1>
+  <button class="btn btn-lg btn-primary btn-block" id="submit" type="submit" style="background-color:#FCFAF9;">Send</button>
+  <button class="btn btn-lg btn-primary btn-block" id="dbpost" type="submit" style="background-color:#FCFAF9;">DB Update</button>
+  <p><span id="form-response"></span></p>
+</body>
+</html>
