@@ -1,0 +1,40 @@
+body {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 18px;
+    background-color: #575757;
+    margin: 0px;
+}
+
+.bodyWrapper {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.companyWrapper {
+    white-space: pre;
+    border-style: solid;
+    border: 2;
+    border-color: blue;
+}
+
+#company-name {
+    padding-top: 15;
+    padding-left: 20;
+    color: #e0e0e0;
+}
+#stock-price {
+    padding-top: 15;
+    padding-left: 5;
+    color: #a0dd9f;
+}
+
+#upper {
+    padding-bottom: 20px;
+    background-color: #a0dd9f;
+}
+
+#lower {
+    padding-top: 20px;
+}

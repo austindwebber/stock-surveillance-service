@@ -4,72 +4,19 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
   <script type="text/javascript">
     $(document).ready(function() {
-      $("#submit").click(function(e) {
-        e.preventDefault();
-        var stocks = "GOOG;AAPL;MSFT;TSLA";
-        $.ajax({
-          type: "POST",
-          url: 'https://9hhkhg6iw3.execute-api.us-east-1.amazonaws.com/v4/portfolio', contentType: 'application/json',
-          data: JSON.stringify({
-            'stocks': stocks
-          }),
-          success: function(res){
-
-            console.log(res);
-
-            console.log(res.length);
-
-            var e = document.body; // whatever you want to append the rows to:
-
-            for(var i = 0; i < res.length; i++){
-
-              var row = document.createElement("div");
-              var button = document.createElement('input');
-
-
-
-
-              // SET INPUT ATTRIBUTE 'type' AND 'value'.
-              button.setAttribute('type', 'button');
-              button.setAttribute('value', 'More Info: ' + res[i]['symbol']);
-
-              // ADD THE BUTTON's 'onclick' EVENT.
-              //button.setAttribute('onclick', 'GetTableValues()');
-
-              row.setAttribute('style', 'white-space: pre;border-style: solid;border: 2;border-color: blue');
-              row.className = "row";
-              row.textContent = res[i]['companyName'] + "\r\n";
-              row.textContent += res[i]['symbol'] + "\r\n";
-              row.textContent += res[i]['price'] + "\r\n";
-              row.textContent += res[i]['changes'] + "\r\n";
-
-              e.appendChild(row);
-              row.appendChild(button);
-            }
-
-
-
-            $('#form-response').html('<div class="alert alert-info" role="alert">Current Porfolio Overview</div>');
-          },
-          error: function(){
-            $('#form-response').html('<div class="alert alert-info" role="alert">Oops! Something went wrong ... </div>');
-          }
-        });
-      })
-
       $("#dbpost").click(function(e) {
         e.preventDefault();
-        var stocks = "AAPL,GOOG";
+        var stock = $("#stockTicker").val();
         var userid = "tonypetersen@hotmail.com";
         $.ajax({
           type: "POST",
           url: 'https://9hhkhg6iw3.execute-api.us-east-1.amazonaws.com/v5/updateportfolio', contentType: 'application/json',
           data: JSON.stringify({
-            'stocks': stocks,
+            'stock': stock,
             'userid': userid
           }),
           success: function(res){
-            $('#form-response').html('<div class="alert alert-info" role="alert">Current Porfolio Overview</div>');
+            $('#form-response').html('<div class="alert alert-info" role="alert">Portfolio Updated!</div>');
           },
           error: function(){
             $('#form-response').html('<div class="alert alert-info" role="alert">Oops! Something went wrong ... </div>');
@@ -78,30 +25,72 @@
       })
     });
   </script>
-  <script language="javascript">
-    function genDivs(v){
-      var e = document.body; // whatever you want to append the rows to:
-      for(var i = 0; i < v; i++){
-        var row = document.createElement("div");
-        row.className = "row";
-        row.innerText = i;
-        e.appendChild(row);
-      }
+  <script>
+    function loadPortfolio() {
+      var userid = "tonypetersen@hotmail.com";
 
+      $.ajax({
+        type: "POST",
+        url: 'https://9hhkhg6iw3.execute-api.us-east-1.amazonaws.com/v5/portfolio', contentType: 'application/json',
+        data: JSON.stringify({
+          'userid': userid
+        }),
+        success: function(res){
+          console.log(res);
 
+          console.log(res.length);
+
+          var e = document.body; // whatever you want to append the rows to:
+
+          for(var i = 0; i < res.length; i++){
+
+            var row = document.createElement("div");
+            var buttonStock = document.createElement('input');
+            var buttonRemove = document.createElement('input');
+
+            buttonStock.setAttribute('type', 'button');
+            buttonStock.setAttribute('value', 'More Info: ' + res[i]['symbol']);
+
+            buttonRemove.setAttribute('type', 'button');
+            buttonRemove.setAttribute('value', 'Remove');
+
+            row.className = "companyWrapper";
+            row.textContent = res[i]['companyName'] + "\r\n";
+            row.textContent += res[i]['symbol'] + "\r\n";
+            row.textContent += res[i]['price'] + "\r\n";
+            row.textContent += res[i]['changes'] + "\r\n";
+
+            e.appendChild(row);
+            row.appendChild(buttonStock);
+            row.appendChild(buttonRemove);
+          }
+
+          $('#form-response').html('<div class="alert alert-info" role="alert">Current Porfolio Overview</div>');
+        },
+        error: function(){
+          $('#form-response').html('<div class="alert alert-info" role="alert">Oops! Something went wrong ... </div>');
+        }
+      });
     }
   </script>
   <script>
     window.addEventListener('load', function () {
-
-        //genDivs(10);
+        loadPortfolio();
     });
   </script>
+  <link rel="icon" type="image/ico" href="logo/favicon.ico">
+  <link rel="stylesheet" href="css/portfolio.css">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div id="grid"></div>
-  <h1>Portfolio View</h1>
-  <button class="btn btn-lg btn-primary btn-block" id="submit" type="submit" style="background-color:#FCFAF9;">Send</button>
+  <div id="upper" class="bodyWrapper">
+    <img src="logo/surveillance_logo_with_name.PNG" alt="Stock Surveillance">
+
+    <br><p><h1>Portfolio View</h1></p>
+
+  </div>
+  <input type="text" id="stockTicker" class="form-control" placeholder="Ticker" required />
   <button class="btn btn-lg btn-primary btn-block" id="dbpost" type="submit" style="background-color:#FCFAF9;">DB Update</button>
   <p><span id="form-response"></span></p>
 </body>
