@@ -45,15 +45,22 @@
             var mktCap = res['mktCap'].toLocaleString('en', {useGrouping:true});
             var avgVol = res['volAvg'].toLocaleString('en', {useGrouping:true});
             var lastDiv = res['lastDiv'].toFixed(2);
-            var numEmployees = res['employees'].toLocaleString('en', {useGrouping:true});
-            var dest = $('#stockQuote').attr("href");
-            console.log(dest);
+            var numEmployees = res['employees'].replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+            var changes = res['changes'].toFixed(2) + '';
+            var percentChange = ((changes / res['price']) * 100).toFixed(2);
 
 
             
             $('#company-image').html('<img src="' + res['image'] + '" style="height: 50px" >');
             $('#company-name').html(res['companyName'] + ": ");
             $('#stock-price').html('$' + res['price']);
+            if (changes.includes("-")) {
+              $('#stock-changes').html('<span style="color: #ff726f !important; font-size: 14px; font-weight: bold;">' + changes + '</span>');
+              $('#stock-percent-change').html('<span style="color: #ff726f !important; font-size: 14px; font-weight: bold;">(' + percentChange + '%)</span>');
+            } else {
+              $('#stock-changes').html('<span style="color: #a0dd9f !important; font-size: 14px; font-weight: bold;">' + changes + '</span>');
+              $('#stock-percent-change').html('<span style="color: #a0dd9f !important; font-size: 14px; font-weight: bold;">(' + percentChange + '%)</span>');
+            }
             $('#company-description').html(res['description']);
             $('#price-high').html('$' + res['priceHigh']);
             $('#price-low').html('$' + res['priceLow']);
@@ -68,7 +75,7 @@
             $('#country').html(res['country']);
             $('#website').html('<a href="' + res['website'] + '" target="_blank">' + res['website'] + '</a>');
             $('#form-response').removeClass('d-none');
-            $('html,body').animate({ scrollTop: $(dest).offset().top }, 'slow');
+
           },
           error: function(){
             $('#form-response').removeClass('d-none');
@@ -126,6 +133,8 @@
         <span id="company-image"></span>
         <span id="company-name" class="pt-3 pl-3"></span>
         <span id="stock-price" class="pt-3 pl-2"></span>
+        <span id="stock-changes" class="pt-3 pl-1"></span>
+        <span id="stock-percent-change" class="pt-3 pl-1"></span>
       </div>
       <br>
       

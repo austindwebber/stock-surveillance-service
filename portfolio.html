@@ -77,9 +77,13 @@
             var buttonStock = document.createElement('input');
             var buttonRemove = document.createElement('input');
             var cardCompanyName = document.createElement('h4');
+            cardCompanyName.setAttribute('style', 'color: white;');
             var cardSymbol = document.createElement('p');
             var cardPrice = document.createElement('p');
-            var cardPriceChange = document.createElement('p');
+            var cardPriceChangeLabel = document.createElement('span');
+            var cardPriceChange = document.createElement('span');
+            var breakElement1 = document.createElement('br');
+            var breakElement2 = document.createElement('br');
             var buttonGroup = document.createElement('div');
 
             var symbol = res[i]['symbol'];
@@ -89,7 +93,7 @@
 
             buttonStock.setAttribute('type', 'button');
             buttonStock.setAttribute('value', 'More Info');
-            buttonStock.classList = "btn btn-primary btn-dark";
+            buttonStock.classList = "btn btn-primary";
 
 
             buttonRemove.setAttribute('type', 'button');
@@ -107,7 +111,9 @@
             cardCompanyName.textContent = res[i]['companyName'];
             cardSymbol.textContent = "Symbol: " + res[i]['symbol'];
             cardPrice.textContent = "Current Price: $" + res[i]['price'];
-            cardPriceChange.textContent = "Price Change: $" + res[i]['changes'];
+            cardPriceChangeLabel.textContent = "Price Change: ";
+            var percentChange = ((res[i]['changes'].toFixed(2) / res[i]['price']) * 100).toFixed(2);
+            cardPriceChange.textContent = res[i]['changes'].toFixed(2) + " (" + percentChange + "%)";
 
             if(cardPriceChange.textContent.includes("-")) {
               cardPriceChange.setAttribute("style", "color: red !important;");
@@ -125,7 +131,10 @@
             card.appendChild(cardCompanyName);
             card.appendChild(cardSymbol);
             card.appendChild(cardPrice);
+            card.appendChild(cardPriceChangeLabel);
             card.appendChild(cardPriceChange);
+            card.appendChild(breakElement1);
+            card.appendChild(breakElement2);
 
             cardContainer.appendChild(card);
             buttonGroup.appendChild(buttonStock);

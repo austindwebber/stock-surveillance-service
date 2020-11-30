@@ -30,7 +30,8 @@ body {
 #stock-price {
     padding-top: 15;
     padding-left: 10;
-    color: #a0dd9f;
+    color: black;
+    font-weight: bold;
 }
 
 #upper {

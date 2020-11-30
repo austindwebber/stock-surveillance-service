@@ -21,7 +21,8 @@ body {
     padding: 10px !important;
     width: 335px !important;
     height: auto !important;
-    background-color: #a0dd9f !important;
+    background-color: #343a40 !important;
+    color: #6c757d !important;
 }
 #cardContainer {
     margin-top: 50px !important;

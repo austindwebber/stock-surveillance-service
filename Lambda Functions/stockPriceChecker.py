@@ -16,6 +16,7 @@ def lambda_handler(event, context):
         priceRange = deserializedData[0]['range']
         priceLow = priceRange.split("-")[0]
         priceHigh = priceRange.split("-")[1]
+        changes = deserializedData[0]['changes']
         companyName = deserializedData[0]['companyName']
         industry = deserializedData[0]['industry']
         website = deserializedData[0]['website']
@@ -42,6 +43,7 @@ def lambda_handler(event, context):
             "priceRange": priceRange,
             "priceLow": priceLow,
             "priceHigh": priceHigh,
+            "changes": changes,
             "companyName": companyName,
             "industry": industry,
             "website": website,
