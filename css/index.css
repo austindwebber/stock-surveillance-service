@@ -58,21 +58,29 @@ body {
     flex-direction: row;
     align-items: center;
 }
+
 .flexbox-item {
     width: fit-content;
     margin: 10px;
     padding: 5px;
 }
+
 .flexbox-item-1 {
     min-height: 20px;
 }
+
 .flexbox-item-2 {
     min-height: 20px;
 }
+
 .data-label {
     font-weight: bold;
 }
+
 #stockTickerInput {
     justify-content: center;
 }
 
+a {
+    color: #004cff;
+}

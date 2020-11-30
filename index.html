@@ -9,7 +9,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville&display=swap" rel="stylesheet"> 
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-  <script src="https://cdn.zingchart.com/zingchart.min.js"></script>
   <script src="https://www.simplestockcharts.com/assets/src/simplestockchart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
@@ -47,7 +46,10 @@
             var avgVol = res['volAvg'].toLocaleString('en', {useGrouping:true});
             var lastDiv = res['lastDiv'].toFixed(2);
             var numEmployees = res['employees'].toLocaleString('en', {useGrouping:true});
-            
+            var dest = $('#stockQuote').attr("href");
+            console.log(dest);
+
+
             
             $('#company-image').html('<img src="' + res['image'] + '" style="height: 50px" >');
             $('#company-name').html(res['companyName'] + ": ");
@@ -64,11 +66,13 @@
             $('#ceo').html(res['ceo']);
             $('#employees').html(numEmployees);
             $('#country').html(res['country']);
-            $('#website').html('<a href="' + res['website'] + '">' + res['website'] + '</a>');
+            $('#website').html('<a href="' + res['website'] + '" target="_blank">' + res['website'] + '</a>');
             $('#form-response').removeClass('d-none');
+            $('html,body').animate({ scrollTop: $(dest).offset().top }, 'slow');
           },
           error: function(){
-            $('#form-response').html('<div class="alert alert-info" role="alert">Oops! Something went wrong ... </div>');
+            $('#form-response').removeClass('d-none');
+            $('#form-response').html('<div class="alert alert-danger" role="alert">Oops... we are unable to find a quote for that ticker. Please try again.</div>');
           }
         });
       })
@@ -76,6 +80,34 @@
   </script>
 </head>
 <body>
+  <nav class="navbar sticky-top navbar-expand-sm navbar-dark bg-dark" style="background-color: #575757;">
+    <a class="navbar-brand text-center" href="#">
+      <img src="logo/favicon.ico" width="30" height="30" class="d-inline-block align-top" alt="">
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="https://csisproject2020.s3.us-east-2.amazonaws.com/index.html">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="https://stocksurveillance.auth.us-east-1.amazoncognito.com/signup?response_type=token&client_id=710uq55lq6s1bus5c1rlsqscnc&redirect_uri=https://csisproject2020.s3.us-east-2.amazonaws.com/">Your Portfolio</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="#">About Us</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/austindwebber/stock-surveillance-service">GitHub</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
   <div id="upper" class="bodyWrapper">
     <img src="logo/surveillance_logo_with_name.PNG" alt="Stock Surveillance">
     
@@ -89,7 +121,7 @@
   <div id="lower" class="bodyWrapper">
 
     <div class="d-none" id="form-response">
-    
+      <a id="stockQuote"></a>
       <div id="companyWrapper" class="pt-2 pb-2">
         <span id="company-image"></span>
         <span id="company-name" class="pt-3 pl-3"></span>
@@ -116,14 +148,20 @@
         </div>
 
       </div>
-
-      <br>
+      <div id="chart"></div>
+      <br><br>
       <div id="company-description"></div>
       <br>
-      <div id="chart"></div>
 
     </div>
 
   </div>
 </body>
+<footer class="page-footer font-small">
+
+  <div class="footer-copyright text-center py-3">2020 Copyright:
+    <a href="https://csisproject2020.s3.us-east-2.amazonaws.com/index.html"> Stock Surveillance Service</a>
+  </div>
+
+</footer>
 </html>

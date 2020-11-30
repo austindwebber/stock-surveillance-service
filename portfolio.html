@@ -1,7 +1,15 @@
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!doctype html>
+<html lang="en">
 <head>
   <title>My Portfolio</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="css/portfolio.css">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <link rel="icon" type="image/ico" href="logo/favicon.ico">
   <script type="text/javascript">
     $(document).ready(function() {
       $("#dbpost").click(function(e) {
@@ -16,14 +24,34 @@
             'userid': userid
           }),
           success: function(res){
-            $('#form-response').html('<div class="alert alert-info" role="alert">Portfolio Updated!</div>');
+            $('#form-response').html('<div class="alert alert-dark" role="alert">Portfolio updated! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
           },
           error: function(){
-            $('#form-response').html('<div class="alert alert-info" role="alert">Oops! Something went wrong ... </div>');
+            $('#form-response').html('<div class="alert alert-info" role="alert">Oops! Something went wrong ... <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
           }
         });
       })
     });
+  </script>
+  <script>
+    function removeStock(stock) {
+      var userid = "tonypetersen@hotmail.com";
+
+      $.ajax({
+        type: "POST",
+        url: 'https://9hhkhg6iw3.execute-api.us-east-1.amazonaws.com/v5/removeportfolio', contentType: 'application/json',
+        data: JSON.stringify({
+          'userid': userid,
+          'stock': stock
+        }),
+        success: function(res){
+          $('#form-response').html('<div class="alert alert-dark" role="alert">' + stock + ' removed!' + ' <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+        },
+        error: function(){
+          $('#form-response').html('<div class="alert alert-info" role="alert">Oops! Something went wrong ... <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+        }
+      });
+    }
   </script>
   <script>
     function loadPortfolio() {
@@ -36,39 +64,81 @@
           'userid': userid
         }),
         success: function(res){
-          console.log(res);
+          var e = document.body; // whatever you want to append the cardContainer to:
 
-          console.log(res.length);
-
-          var e = document.body; // whatever you want to append the rows to:
+          var cardContainer = document.createElement('div');
+          cardContainer.classList = "bodyWrapper card-columns";
+          cardContainer.id = "cardContainer";
+          e.appendChild(cardContainer);
 
           for(var i = 0; i < res.length; i++){
 
-            var row = document.createElement("div");
+            var card = document.createElement("div");
             var buttonStock = document.createElement('input');
             var buttonRemove = document.createElement('input');
+            var cardCompanyName = document.createElement('h4');
+            var cardSymbol = document.createElement('p');
+            var cardPrice = document.createElement('p');
+            var cardPriceChange = document.createElement('p');
+            var buttonGroup = document.createElement('div');
+
+            var symbol = res[i]['symbol'];
+
+            buttonGroup.setAttribute('role', 'group');
+            buttonGroup.className = "btn-group";
 
             buttonStock.setAttribute('type', 'button');
-            buttonStock.setAttribute('value', 'More Info: ' + res[i]['symbol']);
+            buttonStock.setAttribute('value', 'More Info');
+            buttonStock.classList = "btn btn-primary btn-dark";
+
 
             buttonRemove.setAttribute('type', 'button');
             buttonRemove.setAttribute('value', 'Remove');
+            buttonRemove.classList = "btn btn-primary btn-danger";
 
-            row.className = "companyWrapper";
-            row.textContent = res[i]['companyName'] + "\r\n";
-            row.textContent += res[i]['symbol'] + "\r\n";
-            row.textContent += res[i]['price'] + "\r\n";
-            row.textContent += res[i]['changes'] + "\r\n";
+            buttonRemove.onclick = (function(symbol){
+              return function(){
+                removeStock(symbol);
+              }
+            })(symbol);
 
-            e.appendChild(row);
-            row.appendChild(buttonStock);
-            row.appendChild(buttonRemove);
+            card.className = "card";
+
+            cardCompanyName.textContent = res[i]['companyName'];
+            cardSymbol.textContent = "Symbol: " + res[i]['symbol'];
+            cardPrice.textContent = "Current Price: $" + res[i]['price'];
+            cardPriceChange.textContent = "Price Change: $" + res[i]['changes'];
+
+            if(cardPriceChange.textContent.includes("-")) {
+              cardPriceChange.setAttribute("style", "color: red !important;");
+            }
+            else {
+              cardPriceChange.setAttribute("style", "color: green !important;");
+            }
+            
+
+            cardCompanyName.className = "card-title";
+            cardSymbol.className = "card-title";
+            cardPrice.className = "card-title";
+            cardPriceChange.className = "card-title";
+
+            card.appendChild(cardCompanyName);
+            card.appendChild(cardSymbol);
+            card.appendChild(cardPrice);
+            card.appendChild(cardPriceChange);
+
+            cardContainer.appendChild(card);
+            buttonGroup.appendChild(buttonStock);
+            buttonGroup.appendChild(buttonRemove);
+            card.appendChild(buttonGroup);
+
           }
 
-          $('#form-response').html('<div class="alert alert-info" role="alert">Current Porfolio Overview</div>');
+
+          $('#form-response').html('<div class="alert alert-dark" role="alert">Portfolio successfully loaded! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
         },
         error: function(){
-          $('#form-response').html('<div class="alert alert-info" role="alert">Oops! Something went wrong ... </div>');
+          $('#form-response').html('<div class="alert alert-info" role="alert">Oops! Something went wrong ... <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
         }
       });
     }
@@ -78,20 +148,48 @@
         loadPortfolio();
     });
   </script>
-  <link rel="icon" type="image/ico" href="logo/favicon.ico">
-  <link rel="stylesheet" href="css/portfolio.css">
-  <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div id="upper" class="bodyWrapper">
-    <img src="logo/surveillance_logo_with_name.PNG" alt="Stock Surveillance">
+  <nav class="navbar sticky-top navbar-expand-sm navbar-dark bg-dark justify-content-between" style="background-color: #575757;">
+    <a class="navbar-brand text-center" href="#">
+      <img src="logo/favicon.ico" width="30" height="30" class="d-inline-block align-top" alt="">
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="https://csisproject2020.s3.us-east-2.amazonaws.com/index.html">Home <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="http://csisproject2020.s3.us-east-2.amazonaws.com/portfolio.html">Your Portfolio</a>
+      </li>
 
-    <br><p><h1>Portfolio View</h1></p>
+      <li class="nav-item">
+        <a class="nav-link" href="#">About Us</a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="https://github.com/austindwebber/stock-surveillance-service">GitHub</a>
+      </li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" type="search" placeholder="Ticker" aria-label="Ticker" id="stockTicker">
+      <button class="btn btn-outline-success my-2 my-sm-0" id="dbpost" type="submit">Add to List</button>
+    </form>
 
   </div>
-  <input type="text" id="stockTicker" class="form-control" placeholder="Ticker" required />
-  <button class="btn btn-lg btn-primary btn-block" id="dbpost" type="submit" style="background-color:#FCFAF9;">DB Update</button>
-  <p><span id="form-response"></span></p>
+</nav>
+
+  <div id="upper" class="bodyWrapper">
+    <br>
+    <p><h1>Stock Surveillance Service</h1></p>
+    <br>
+    <p><h2>Portfolio View</h2></p>
+
+  </div>
+
 </body>
+<p><span id="form-response"></span></p>
 </html>
