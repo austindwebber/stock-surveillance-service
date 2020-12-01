@@ -6,7 +6,7 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   <link rel="stylesheet" href="css/index.css">
   <link rel="icon" type="image/ico" href="logo/favicon.ico">
-  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville&display=swap" rel="stylesheet"> 
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville&display=swap" rel="stylesheet">
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
   <script src="https://www.simplestockcharts.com/assets/src/simplestockchart.js"></script>
@@ -17,73 +17,88 @@
       $("#submit").click(function(e) {
         e.preventDefault();
         var stockTicker = $("#stockTicker").val();
-        $.ajax({
-          type: "POST",
-          url: 'https://9hhkhg6iw3.execute-api.us-east-1.amazonaws.com/v2', contentType: 'application/json',
-          data: JSON.stringify({
-            'stockTicker': stockTicker
-          }),
-          success: function(res){
-
-            console.log(res);
-
-
-            var chart = new SimpleStockChart();
-            chart.element = document.getElementById('chart');
-            chart.key = 'Q4OESUB6H59YFL9Z';
-            chart.ticker = res['stockTicker'];
-            chart.chart.stroke = '#1d8f00';
-            chart.font.fontSize = '14';
-            chart.font.fontFill = '#ffffff';
-            chart.style.width = '1000px';
-            chart.style.height = '420px';
-            chart.style.margin = '20px';
-            chart.style.display = 'inline-flex';
-            chart.minorAxis.count = 5;
-            chart.draw();
-
-            var mktCap = res['mktCap'].toLocaleString('en', {useGrouping:true});
-            var avgVol = res['volAvg'].toLocaleString('en', {useGrouping:true});
-            var lastDiv = res['lastDiv'].toFixed(2);
-            var numEmployees = res['employees'].replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
-            var changes = res['changes'].toFixed(2) + '';
-            var percentChange = ((changes / res['price']) * 100).toFixed(2);
-
-
-            
-            $('#company-image').html('<img src="' + res['image'] + '" style="height: 50px" >');
-            $('#company-name').html(res['companyName'] + ": ");
-            $('#stock-price').html('$' + res['price']);
-            if (changes.includes("-")) {
-              $('#stock-changes').html('<span style="color: #ff726f !important; font-size: 14px; font-weight: bold;">' + changes + '</span>');
-              $('#stock-percent-change').html('<span style="color: #ff726f !important; font-size: 14px; font-weight: bold;">(' + percentChange + '%)</span>');
-            } else {
-              $('#stock-changes').html('<span style="color: #a0dd9f !important; font-size: 14px; font-weight: bold;">' + changes + '</span>');
-              $('#stock-percent-change').html('<span style="color: #a0dd9f !important; font-size: 14px; font-weight: bold;">(' + percentChange + '%)</span>');
-            }
-            $('#company-description').html(res['description']);
-            $('#price-high').html('$' + res['priceHigh']);
-            $('#price-low').html('$' + res['priceLow']);
-            $('#market-cap').html('$' + mktCap);
-            $('#avg-volume').html(avgVol);
-            $('#last-dividend').html(lastDiv);
-            $('#ipo-date').html(res['ipoDate']);
-            $('#industry').html(res['industry']);
-            $('#sector').html(res['sector']);
-            $('#ceo').html(res['ceo']);
-            $('#employees').html(numEmployees);
-            $('#country').html(res['country']);
-            $('#website').html('<a href="' + res['website'] + '" target="_blank">' + res['website'] + '</a>');
-            $('#form-response').removeClass('d-none');
-
-          },
-          error: function(){
-            $('#form-response').removeClass('d-none');
-            $('#form-response').html('<div class="alert alert-danger" role="alert">Oops... we are unable to find a quote for that ticker. Please try again.</div>');
-          }
-        });
+        loadStockInfo(stockTicker);
       })
     });
+  </script>
+  <script>
+    function loadStockInfo(stockTicker) {
+
+      $.ajax({
+        type: "POST",
+        url: 'https://9hhkhg6iw3.execute-api.us-east-1.amazonaws.com/v2', contentType: 'application/json',
+        data: JSON.stringify({
+          'stockTicker': stockTicker
+        }),
+        success: function(res){
+
+          console.log(res);
+
+
+          var chart = new SimpleStockChart();
+          chart.element = document.getElementById('chart');
+          chart.key = 'Q4OESUB6H59YFL9Z';
+          chart.ticker = res['stockTicker'];
+          chart.chart.stroke = '#1d8f00';
+          chart.font.fontSize = '14';
+          chart.font.fontFill = '#ffffff';
+          chart.style.width = '1000px';
+          chart.style.height = '420px';
+          chart.style.margin = '20px';
+          chart.style.display = 'inline-flex';
+          chart.minorAxis.count = 5;
+          chart.draw();
+
+          var mktCap = res['mktCap'].toLocaleString('en', {useGrouping:true});
+          var avgVol = res['volAvg'].toLocaleString('en', {useGrouping:true});
+          var lastDiv = res['lastDiv'].toFixed(2);
+          var numEmployees = res['employees'].replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+          var changes = res['changes'].toFixed(2) + '';
+          var percentChange = ((changes / res['price']) * 100).toFixed(2);
+
+
+
+          $('#company-image').html('<img src="' + res['image'] + '" style="height: 50px" >');
+          $('#company-name').html(res['companyName'] + ": ");
+          $('#stock-price').html('$' + res['price']);
+          if (changes.includes("-")) {
+            $('#stock-changes').html('<span style="color: #ff726f !important; font-size: 14px; font-weight: bold;">' + changes + '</span>');
+            $('#stock-percent-change').html('<span style="color: #ff726f !important; font-size: 14px; font-weight: bold;">(' + percentChange + '%)</span>');
+          } else {
+            $('#stock-changes').html('<span style="color: #a0dd9f !important; font-size: 14px; font-weight: bold;">' + changes + '</span>');
+            $('#stock-percent-change').html('<span style="color: #a0dd9f !important; font-size: 14px; font-weight: bold;">(' + percentChange + '%)</span>');
+          }
+          $('#company-description').html(res['description']);
+          $('#price-high').html('$' + res['priceHigh']);
+          $('#price-low').html('$' + res['priceLow']);
+          $('#market-cap').html('$' + mktCap);
+          $('#avg-volume').html(avgVol);
+          $('#last-dividend').html(lastDiv);
+          $('#ipo-date').html(res['ipoDate']);
+          $('#industry').html(res['industry']);
+          $('#sector').html(res['sector']);
+          $('#ceo').html(res['ceo']);
+          $('#employees').html(numEmployees);
+          $('#country').html(res['country']);
+          $('#website').html('<a href="' + res['website'] + '" target="_blank">' + res['website'] + '</a>');
+          $('#form-response').removeClass('d-none');
+
+        },
+        error: function(){
+          $('#form-response').removeClass('d-none');
+          $('#form-response').html('<div class="alert alert-danger" role="alert">Oops... we are unable to find a quote for that ticker. Please try again.</div>');
+        }
+      });
+    }
+  </script>
+  <script>
+    var stockTicker = localStorage.getItem("stockTicker");
+
+    if(stockTicker.length > 0){
+      loadStockInfo(stockTicker);
+    }
+
+    localStorage.setItem("stockTicker", "");
   </script>
 </head>
 <body>
@@ -94,7 +109,7 @@
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-  
+
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item active">
@@ -117,7 +132,7 @@
 
   <div id="upper" class="bodyWrapper">
     <img src="logo/surveillance_logo_with_name.PNG" alt="Stock Surveillance">
-    
+
     <br><p>Please enter a stock ticker for us to quote:</p>
       <div class="input-group text-center" id="stockTickerInput">
         <input type="text" class="input-sm" id="stockTicker" placeholder="Ticker" aria-label="Username" aria-describedby="basic-addon1" required>
@@ -137,7 +152,7 @@
         <span id="stock-percent-change" class="pt-3 pl-1"></span>
       </div>
       <br>
-      
+
       <div class="flexbox-container">
         <div class="flexbox-item">
           <span class="flexbox-item-1 data-label">High Price: </span> <span id="price-high"></span><br>

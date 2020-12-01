@@ -9,7 +9,19 @@
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script src="https://sdk.amazonaws.com/js/aws-sdk-2.797.0.min.js"></script>
+  <script src="js/amazon-cognito-identity.min.js"></script>  
+	<script src="js/config.js"></script>
   <link rel="icon" type="image/ico" href="logo/favicon.ico">
+  <script> //decode id_token
+    function jwtDecode(t) {
+      let token = {};
+      token.raw = t;
+      token.header = JSON.parse(window.atob(t.split('.')[0]));
+      token.payload = JSON.parse(window.atob(t.split('.')[1]));
+      return (token)
+    }
+  </script>
   <script type="text/javascript">
     $(document).ready(function() {
       $("#dbpost").click(function(e) {
@@ -57,6 +69,13 @@
     function loadPortfolio() {
       var userid = "tonypetersen@hotmail.com";
 
+      var url = window.location.hash;
+      var id_token = url.match(/\#(?:id_token)\=([\S\s]*?)\&/)[1];
+      console.log(id_token);
+      console.log(jwtDecode(id_token));
+      var email = jwtDecode(id_token).payload.email;
+      console.log(email);
+
       $.ajax({
         type: "POST",
         url: 'https://9hhkhg6iw3.execute-api.us-east-1.amazonaws.com/v5/portfolio', contentType: 'application/json',
@@ -89,12 +108,19 @@
             var symbol = res[i]['symbol'];
 
             buttonGroup.setAttribute('role', 'group');
-            buttonGroup.className = "btn-group";
+            buttonGroup.setAttribute('style', 'justify-content: center !important;');
+            buttonGroup.className = "btn-toolbar";
 
             buttonStock.setAttribute('type', 'button');
             buttonStock.setAttribute('value', 'More Info');
-            buttonStock.classList = "btn btn-primary";
+            buttonStock.classList = "btn btn-primary mr-2";
 
+            buttonStock.onclick = (function(symbol){
+              return function(){
+                localStorage.setItem("stockTicker",symbol);
+                window.location = "index.html";
+              }
+            })(symbol);
 
             buttonRemove.setAttribute('type', 'button');
             buttonRemove.setAttribute('value', 'Remove');
@@ -116,12 +142,12 @@
             cardPriceChange.textContent = res[i]['changes'].toFixed(2) + " (" + percentChange + "%)";
 
             if(cardPriceChange.textContent.includes("-")) {
-              cardPriceChange.setAttribute("style", "color: red !important;");
+              cardPriceChange.setAttribute("style", "color: #ff726f !important;");
             }
             else {
-              cardPriceChange.setAttribute("style", "color: green !important;");
+              cardPriceChange.setAttribute("style", "color: #a0dd9f !important;");
             }
-            
+
 
             cardCompanyName.className = "card-title";
             cardSymbol.className = "card-title";
