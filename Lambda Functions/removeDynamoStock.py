@@ -7,13 +7,9 @@ def lambda_handler(event, context):
     userid = jsonRequestInput['userid']
     stock = jsonRequestInput['stock']
     
-    #userid = "tonypetersen@hotmail.com"
-    #stock = "BLNK"
     
     
     db_stocks = getDynamoData(userid)
-
-    
     db_stocks = removeDynamoStock(stock, db_stocks)
     
     
@@ -62,11 +58,13 @@ def removeDynamoStock(old_stock, existing_stocks):
     if(old_stock in existing_stocks):
         existing_stocks = existing_stocks.replace(old_stock, "")
         existing_stocks = existing_stocks.replace(",,", ",")
+    
+    if(len(existing_stocks) > 0):
         
-    if(existing_stocks[0] == ","):
-        existing_stocks = existing_stocks[1:]
-        
-    if(existing_stocks[len(existing_stocks) - 1] == ","):
-        existing_stocks = existing_stocks[:len(existing_stocks) - 1]
+        if(existing_stocks[0] == ","):
+            existing_stocks = existing_stocks[1:]
+            
+        if(existing_stocks[len(existing_stocks) - 1] == ","):
+            existing_stocks = existing_stocks[:len(existing_stocks) - 1]
     
     return existing_stocks

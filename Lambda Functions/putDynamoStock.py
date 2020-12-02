@@ -7,13 +7,15 @@ def lambda_handler(event, context):
     userid = jsonRequestInput['userid']
     stock = jsonRequestInput['stock']
     
-    #userid = "tonypetersen@hotmail.com"
-    #stock = "MSFT"
     
     db_stocks = getDynamoData(userid)
-    db_stocks = addDynamoStock(stock, db_stocks)
     
-    putDynamoData(userid, db_stocks)
+    if(db_stocks == ""):
+        putDynamoData(userid, stock)
+    else:
+        db_stocks = addDynamoStock(stock, db_stocks)
+        putDynamoData(userid, db_stocks)
+    
 
     
     # TODO implement
@@ -38,6 +40,9 @@ def getDynamoData(userid):
     
     dynamodb = boto3.client('dynamodb')
     db_ret = dynamodb.get_item(TableName='Stocks', Key={'UserId':{'S': userid}})
+    
+    if(len(db_ret) < 2):
+        return ""
     
     db_item = db_ret['Item']
     db_stock_item = db_item['Stock']

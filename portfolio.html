@@ -10,7 +10,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
   <script src="https://sdk.amazonaws.com/js/aws-sdk-2.797.0.min.js"></script>
-  <script src="js/amazon-cognito-identity.min.js"></script>  
+  <script src="js/amazon-cognito-identity.min.js"></script>
 	<script src="js/config.js"></script>
   <link rel="icon" type="image/ico" href="logo/favicon.ico">
   <script> //decode id_token
@@ -27,7 +27,8 @@
       $("#dbpost").click(function(e) {
         e.preventDefault();
         var stock = $("#stockTicker").val();
-        var userid = "tonypetersen@hotmail.com";
+        var userid = getUserId();
+
         $.ajax({
           type: "POST",
           url: 'https://9hhkhg6iw3.execute-api.us-east-1.amazonaws.com/v5/updateportfolio', contentType: 'application/json',
@@ -36,7 +37,11 @@
             'userid': userid
           }),
           success: function(res){
-            $('#form-response').html('<div class="alert alert-dark" role="alert">Portfolio updated! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+            $('#form-response').html('<div class="alert alert-dark" role="alert">' + stock + ' added!' + ' <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+
+            setTimeout(function(){
+              location.reload()
+            }, 2000);
           },
           error: function(){
             $('#form-response').html('<div class="alert alert-info" role="alert">Oops! Something went wrong ... <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
@@ -47,7 +52,7 @@
   </script>
   <script>
     function removeStock(stock) {
-      var userid = "tonypetersen@hotmail.com";
+      var userid = getUserId();
 
       $.ajax({
         type: "POST",
@@ -58,6 +63,10 @@
         }),
         success: function(res){
           $('#form-response').html('<div class="alert alert-dark" role="alert">' + stock + ' removed!' + ' <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+
+          setTimeout(function(){
+            location.reload()
+          }, 2000);
         },
         error: function(){
           $('#form-response').html('<div class="alert alert-info" role="alert">Oops! Something went wrong ... <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
@@ -67,15 +76,9 @@
   </script>
   <script>
     function loadPortfolio() {
-      var userid = "tonypetersen@hotmail.com";
+      var userid = getUserId();
 
-      var url = window.location.hash;
-      var id_token = url.match(/\#(?:id_token)\=([\S\s]*?)\&/)[1];
-      console.log(id_token);
-      console.log(jwtDecode(id_token));
-      var email = jwtDecode(id_token).payload.email;
-      console.log(email);
-
+      console.log(userid);
       $.ajax({
         type: "POST",
         url: 'https://9hhkhg6iw3.execute-api.us-east-1.amazonaws.com/v5/portfolio', contentType: 'application/json',
@@ -173,14 +176,31 @@
           $('#form-response').html('<div class="alert alert-dark" role="alert">Portfolio successfully loaded! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
         },
         error: function(){
-          $('#form-response').html('<div class="alert alert-info" role="alert">Oops! Something went wrong ... <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+          $('#form-response').html('<div class="alert alert-info" role="alert">Oops! Unable to load portfolio, please make sure you are logged in . . .<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
         }
       });
     }
   </script>
   <script>
+    function getUserId(){
+      var userid = "";
+
+      var url = window.location.hash;
+      console.log(url);
+      if(url.length > 0){
+        var id_token = url.match(/\#(?:id_token)\=([\S\s]*?)\&/)[1];
+        console.log(id_token);
+        console.log(jwtDecode(id_token));
+        userid = jwtDecode(id_token).payload.email;
+      }
+
+      return userid;
+    }
+  </script>
+  <script>
     window.addEventListener('load', function () {
-        loadPortfolio();
+      document.getElementById('stockTicker').value = "";
+      loadPortfolio();
     });
   </script>
 </head>

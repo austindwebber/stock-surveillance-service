@@ -4,10 +4,9 @@ import json
 
 def lambda_handler(event, context):
     
-    #jsonRequestInput = json.loads(event['body'])
-    #userid = jsonRequestInput['userid']
-    
-    userid = "tonypetersen@hotmail.com"
+    jsonRequestInput = json.loads(event['body'])
+    userid = jsonRequestInput['userid']
+
     db_stocks = getDynamoData(userid)
     
     stocks_list = db_stocks.split(',')

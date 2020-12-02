@@ -83,6 +83,8 @@
           $('#website').html('<a href="' + res['website'] + '" target="_blank">' + res['website'] + '</a>');
           $('#form-response').removeClass('d-none');
 
+          document.getElementById('stockTicker').value = "";
+
         },
         error: function(){
           $('#form-response').removeClass('d-none');
@@ -92,13 +94,17 @@
     }
   </script>
   <script>
-    var stockTicker = localStorage.getItem("stockTicker");
+    window.addEventListener('load', function () {
+      document.getElementById('stockTicker').value = "";
 
-    if(stockTicker.length > 0){
-      loadStockInfo(stockTicker);
-    }
+      var stockTicker = localStorage.getItem("stockTicker");
 
-    localStorage.setItem("stockTicker", "");
+      if(stockTicker.length > 0){
+        loadStockInfo(stockTicker);
+      }
+
+      localStorage.setItem("stockTicker", "");
+    });
   </script>
 </head>
 <body>
