@@ -3,4 +3,7 @@
 
 A project developed by Austin Webber and Tony Petersen as a multi-tier web application for CSIS 630 at UWRF.
 
-Customers will be able to screen stocks, create a stock watchlist, and setup stock notifications.
+Customers will be able to screen stocks, create a stock portfolio, and setup stock notifications.
+
+Project Demo:
+[![Demo](https://img.youtube.com/vi/YHdsMsqlUN4/maxresdefault.jpg)](https://youtu.be/YHdsMsqlUN4)
